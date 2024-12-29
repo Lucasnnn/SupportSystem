@@ -12,7 +12,7 @@ public class SupportLevels {
     public static final String LEVEL_2 = "PL";
     public static final String LEVEL_3 = "SR";
 
-    private SupportLevels() {
+    public SupportLevels() {
         throw new UnsupportedOperationException("This class cannot be instantiated.");
     }
 

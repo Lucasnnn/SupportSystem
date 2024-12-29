@@ -2,8 +2,7 @@ package com.br.lucasnnn.support.application.domain.enums;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class SupportLevelsTests {
 
@@ -19,5 +18,15 @@ public class SupportLevelsTests {
         assertFalse(SupportLevels.isValid("INVALID_LEVEL"), "INVALID_LEVEL should not be valid");
         assertFalse(SupportLevels.isValid(""), "Empty string should not be valid");
         assertFalse(SupportLevels.isValid(null), "Null should not be valid");
+    }
+
+    @Test
+    public void testInstantiationThrowsException() {
+        // Verifica se a exceção UnsupportedOperationException é lançada ao tentar instanciar a classe
+        // Tenta instanciar a classe SupportLevels
+        UnsupportedOperationException thrown = assertThrows(UnsupportedOperationException.class, SupportLevels::new);
+
+        // Verifica se a mensagem da exceção é a esperada
+        assertEquals("This class cannot be instantiated.", thrown.getMessage());
     }
 }
