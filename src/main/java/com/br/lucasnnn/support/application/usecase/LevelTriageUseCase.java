@@ -35,7 +35,11 @@ public class LevelTriageUseCase {
         int size = levels.size();
 
         if (size == 0) {
-            throw new IllegalStateException("No active support levels.");
+            var error = new IllegalStateException("No active support levels.");
+
+            Logging.error(error.getMessage(), error);
+
+            throw error;
         }
 
         Logging.info("Found " + size + " levels of analysis");
@@ -44,11 +48,20 @@ public class LevelTriageUseCase {
                 .sorted(Comparator.comparing(SupportLevel::getLevel))
                 .toList();
 
+        Logging.info("Sorted support levels by skill.");
+
         var strategy = triageStrategyFactory.getStrategy(method);
+
+        Logging.info("Using triage strategy: " + strategy.getClass().getSimpleName());
 
         SupportLevel supportLevel = strategy.execute(levels, request);
 
-        return this.notificationRepository.send(request, supportLevel);
-    }
+        Logging.info("Triage completed, sending notification for support level: " + supportLevel);
 
+        String result = this.notificationRepository.send(request, supportLevel);
+
+        Logging.info("Notification sent with result: " + result);
+
+        return result;
+    }
 }

@@ -20,6 +20,6 @@ public class CreateLevelUseCase {
 
         levelRepository.create(level);
 
-        Logging.info("New support created ");
+        Logging.info("New support created.");
     }
 }

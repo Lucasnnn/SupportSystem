@@ -22,9 +22,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleGenericException(Exception ex) {
         String message = "Error message: ";
 
+        Logging.info("Handling exception: " + ex.getClass().getName());
+
         ExceptionStrategy<?> strategy = exceptionStrategyFactory.getStrategy(ex.getClass());
 
         if (Objects.isNull(strategy)) {
+            Logging.info("No exception strategy found for: " + ex.getClass().getName());
+
             message += ex.getMessage();
 
             return ResponseEntity
@@ -33,9 +37,14 @@ public class GlobalExceptionHandler {
         } else {
             message += strategy.constructMessage(ex);
 
+            Logging.info("Exception strategy found: " + strategy.getClass().getName());
+            Logging.info("Constructed message: " + message);
+
             Logging.error(message, ex);
 
             HttpStatus status = strategy.getStatusCode();
+
+            Logging.info("Returning HTTP status: " + status + " for exception");
 
             return ResponseEntity
                     .status(status)
