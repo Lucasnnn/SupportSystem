@@ -1,8 +1,6 @@
 package com.br.lucasnnn.support.entrypoint.controller;
 
-import com.br.lucasnnn.support.application.domain.entity.SupportLevel;
 import com.br.lucasnnn.support.application.domain.entity.SupportRequest;
-import com.br.lucasnnn.support.application.usecase.CreateLevelUseCase;
 import com.br.lucasnnn.support.application.usecase.LevelTriageUseCase;
 import com.br.lucasnnn.support.infra.utils.Logging;
 import jakarta.validation.Valid;
@@ -11,21 +9,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/support")
-public class SupportController {
+@RequestMapping("/triage")
+public class TriageController {
     private final LevelTriageUseCase levelTriageUseCase;
-    private final CreateLevelUseCase createLevelUseCase;
 
     @Autowired
-    public SupportController(
-            LevelTriageUseCase levelTriageUseCase,
-            CreateLevelUseCase createLevelUseCase
+    public TriageController(
+            LevelTriageUseCase levelTriageUseCase
     ) {
         this.levelTriageUseCase = levelTriageUseCase;
-        this.createLevelUseCase = createLevelUseCase;
     }
 
-    @PatchMapping("/triage")
+    @PatchMapping
     public ResponseEntity<String> supportTriage(
             @Valid @RequestBody() SupportRequest body,
             @RequestParam(value = "method", required = false) String method
@@ -40,21 +35,5 @@ public class SupportController {
         return ResponseEntity
                 .ok()
                 .body(confirmation);
-    }
-
-    @PostMapping("/level")
-    public ResponseEntity<SupportLevel> createSupportLevel(
-            @Valid @RequestBody() SupportLevel body
-    ) {
-        Logging.info("Request received to create new level of support ");
-        Logging.info("createSupportLevel body: " + body);
-
-        createLevelUseCase.execute(body);
-
-        Logging.info("Successfully create level of support.");
-
-        return ResponseEntity
-                .ok()
-                .body(body);
     }
 }
