@@ -27,12 +27,13 @@ public class SupportController {
 
     @PatchMapping("/triage")
     public ResponseEntity<String> supportTriage(
-            @Valid @RequestBody() SupportRequest body
+            @Valid @RequestBody() SupportRequest body,
+            @RequestParam(value = "method", required = false) String method
     ) {
         Logging.info("Request received to triage the required level of support ");
         Logging.info("supportTriage body: " + body);
 
-        String confirmation = levelTriageUseCase.execute(body);
+        String confirmation = levelTriageUseCase.execute(body, method);
 
         Logging.info("Successfully processed support triage.");
 

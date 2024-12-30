@@ -4,58 +4,51 @@ import com.br.lucasnnn.support.application.domain.entity.SupportLevel;
 import com.br.lucasnnn.support.application.domain.entity.SupportRequest;
 import com.br.lucasnnn.support.application.domain.respository.LevelRepository;
 import com.br.lucasnnn.support.application.domain.respository.NotificationRepository;
+import com.br.lucasnnn.support.application.usecase.strategies.triage.TriageStrategyFactory;
 import com.br.lucasnnn.support.infra.utils.Logging;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Comparator;
 
 @Service
 public class LevelTriageUseCase {
     private final LevelRepository levelRepository;
     private final NotificationRepository notificationRepository;
+    private final TriageStrategyFactory triageStrategyFactory;
 
     @Autowired
     LevelTriageUseCase(
             LevelRepository levelRepository,
-            NotificationRepository notificationRepository
+            NotificationRepository notificationRepository,
+            TriageStrategyFactory triageStrategyFactory
     ) {
         this.levelRepository = levelRepository;
         this.notificationRepository = notificationRepository;
+        this.triageStrategyFactory = triageStrategyFactory;
     }
 
-    public String execute(SupportRequest request) {
+    public String execute(SupportRequest request, String method) {
         Logging.info("Executing triage for support request: " + request);
 
         var levels = levelRepository.getAll();
-        Logging.info("Found " + levels.size() + " levels of analysis");
+        int size = levels.size();
 
-        int levelIndex = calculateLevelIndex(request, levels.size());
-        Logging.info("Assigned support request to level " + (levelIndex + 1));
+        if (size == 0) {
+            throw new IllegalStateException("No active support levels.");
+        }
 
-        SupportLevel supportLevel = levels.get(levelIndex);
+        Logging.info("Found " + size + " levels of analysis");
+
+        levels = levels.stream()
+                .sorted(Comparator.comparing(SupportLevel::getLevel))
+                .toList();
+
+        var strategy = triageStrategyFactory.getStrategy(method);
+
+        SupportLevel supportLevel = strategy.execute(levels, request);
 
         return this.notificationRepository.send(request, supportLevel);
     }
 
-    private int calculateLevelIndex(SupportRequest request, int numberOfLevels) {
-        double avgRequest = calculateAverageRequest(request);
-        double rangePerLevel = 10.0 / numberOfLevels;
-
-        Logging.info("Average priority and complexity: " + avgRequest);
-        Logging.info("Each level will cover a range of: " + rangePerLevel);
-
-        int levelIndex = (int) (avgRequest / rangePerLevel);
-
-        if (levelIndex >= numberOfLevels) {
-            levelIndex = numberOfLevels - 1;
-        }
-
-        return levelIndex;
-    }
-
-    private double calculateAverageRequest(SupportRequest request) {
-        Integer priority = request.getPriority();
-        Integer complexity = request.getComplexity();
-
-        return (double) (priority + complexity) / 2;
-    }
 }

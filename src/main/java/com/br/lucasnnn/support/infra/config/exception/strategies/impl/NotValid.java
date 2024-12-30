@@ -1,6 +1,6 @@
-package com.br.lucasnnn.support.infra.exception.factory.impl;
+package com.br.lucasnnn.support.infra.config.exception.strategies.impl;
 
-import com.br.lucasnnn.support.infra.exception.factory.IException;
+import com.br.lucasnnn.support.infra.config.exception.strategies.ExceptionStrategy;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -8,15 +8,22 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NotValid implements IException<MethodArgumentNotValidException> {
+public class NotValid implements ExceptionStrategy<MethodArgumentNotValidException> {
+    @Override
+    public Class<MethodArgumentNotValidException> getExceptionType() {
+        return MethodArgumentNotValidException.class;
+    }
+
+    @Override
     public HttpStatus getStatusCode() {
         return HttpStatus.UNPROCESSABLE_ENTITY;
     }
 
-    public String constructMessage(MethodArgumentNotValidException ex) {
+    @Override
+    public String constructMessage(Exception ex) {
         StringBuilder messageBuilder = new StringBuilder("\n");
 
-        Map<String, String> errors = getErros(ex);
+        Map<String, String> errors = getErros((MethodArgumentNotValidException) ex);
 
         for (Map.Entry<String, String> entry : errors.entrySet()) {
             messageBuilder.append(entry.getKey())
