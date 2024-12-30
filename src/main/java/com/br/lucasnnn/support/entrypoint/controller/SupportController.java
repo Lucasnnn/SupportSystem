@@ -1,34 +1,59 @@
 package com.br.lucasnnn.support.entrypoint.controller;
 
+import com.br.lucasnnn.support.application.domain.entity.SupportLevel;
 import com.br.lucasnnn.support.application.domain.entity.SupportRequest;
-import com.br.lucasnnn.support.application.usecase.ResolveIssueUseCase;
+import com.br.lucasnnn.support.application.usecase.CreateLevelUseCase;
+import com.br.lucasnnn.support.application.usecase.LevelTriageUseCase;
 import com.br.lucasnnn.support.infra.utils.Logging;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/support")
 public class SupportController {
-    private final ResolveIssueUseCase resolveIssueUseCase;
+    private final LevelTriageUseCase levelTriageUseCase;
+    private final CreateLevelUseCase createLevelUseCase;
 
     @Autowired
-    public SupportController(ResolveIssueUseCase resolveIssueUseCase) {
-        this.resolveIssueUseCase = resolveIssueUseCase;
+    public SupportController(
+            LevelTriageUseCase levelTriageUseCase,
+            CreateLevelUseCase createLevelUseCase
+    ) {
+        this.levelTriageUseCase = levelTriageUseCase;
+        this.createLevelUseCase = createLevelUseCase;
     }
 
-    @PatchMapping
-    public ResponseEntity<HttpStatus> process(
-            @RequestBody() SupportRequest body,
-            @RequestParam(value = "level", required = false) String level
+    @PatchMapping("/triage")
+    public ResponseEntity<String> supportTriage(
+            @Valid @RequestBody() SupportRequest body
     ) {
-        Logging.info("Received request to process support issue with level: " + level);
-        Logging.info("SupportRequest body: " + body);
+        Logging.info("Request received to triage the required level of support ");
+        Logging.info("supportTriage body: " + body);
 
-        resolveIssueUseCase.execute(body, level);
+        String confirmation = levelTriageUseCase.execute(body);
 
-        Logging.info("Successfully processed support issue.");
-        return ResponseEntity.ok().build();
+        Logging.info("Successfully processed support triage.");
+
+        return ResponseEntity
+                .ok()
+                .body(confirmation);
+    }
+
+    @PostMapping("/level")
+    public ResponseEntity<SupportLevel> createSupportLevel(
+            @Valid @RequestBody() SupportLevel body
+    ) {
+        Logging.info("Request received to create new level of support ");
+        Logging.info("createSupportLevel body: " + body);
+
+        createLevelUseCase.execute(body);
+
+        Logging.info("Successfully create level of support.");
+
+        return ResponseEntity
+                .ok()
+                .body(body);
     }
 }

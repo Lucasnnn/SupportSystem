@@ -1,7 +1,7 @@
 package com.br.lucasnnn.support.entrypoint.controller;
 
 import com.br.lucasnnn.support.application.domain.entity.SupportRequest;
-import com.br.lucasnnn.support.application.usecase.ResolveIssueUseCase;
+import com.br.lucasnnn.support.application.usecase.LevelTriageUseCase;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
 public class SupportControllerTests {
 
     @Mock
-    private ResolveIssueUseCase resolveIssueUseCase;
+    private LevelTriageUseCase levelTriageUseCase;
 
     @InjectMocks
     private SupportController supportController;
@@ -28,14 +28,15 @@ public class SupportControllerTests {
     public void testProcess() {
         // Arrange
         SupportRequest request = new SupportRequest();
-        request.setIssue("Test issue");
-        String level = "1";
+        request.setId("f47ac10b-58cc-4372-a567-0e02b2c3d479");
+        request.setComplexity(5);
+        request.setPriority(3);
 
         // Act
-        ResponseEntity<HttpStatus> response = supportController.process(request, level);
+        ResponseEntity<String> response = supportController.supportTriage(request);
 
         // Assert
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        verify(resolveIssueUseCase).execute(request, level);
+        verify(levelTriageUseCase).execute(request);
     }
 }
