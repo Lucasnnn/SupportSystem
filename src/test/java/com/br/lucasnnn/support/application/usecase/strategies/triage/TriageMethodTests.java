@@ -24,6 +24,6 @@ public class TriageMethodTests {
     public void testEnumCount() {
         // Verifica se o número de valores no enum é o esperado
         TriageMethod[] methods = TriageMethod.values();
-        assertEquals(1, methods.length); // Deve haver apenas um valor: AVG
+        assertEquals(2, methods.length); // Deve haver apenas um valor: AVG
     }
 }

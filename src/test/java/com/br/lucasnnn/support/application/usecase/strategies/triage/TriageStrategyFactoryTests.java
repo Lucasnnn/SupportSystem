@@ -52,7 +52,7 @@ public class TriageStrategyFactoryTests {
             triageStrategyFactory.getStrategy("INVALID_METHOD");
         });
 
-        assertEquals("The value 'INVALID_METHOD' is not a valid triage method. Allowed values are: AVG", exception.getMessage());
+        assertEquals("The value 'INVALID_METHOD' is not a valid triage method. Allowed values are: AVG, NEXT_LEVEL", exception.getMessage());
     }
 
     @Test
@@ -61,7 +61,7 @@ public class TriageStrategyFactoryTests {
         List<String> validMethods = triageStrategyFactory.getValidTriageMethods();
 
         // Assert
-        assertEquals(1, validMethods.size());
+        assertEquals(2, validMethods.size());
         assertEquals("AVG", validMethods.get(0));
     }
 }
