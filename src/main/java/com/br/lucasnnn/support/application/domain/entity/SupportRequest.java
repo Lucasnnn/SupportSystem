@@ -5,32 +5,32 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 
 public class SupportRequest extends BaseEntity {
-    @NotNull(message = "The 'id' field cannot be null.")
+    @NotNull(message = "The id field cannot be null.")
     private String id;
 
-    @NotNull
+    @NotNull(message = "The priority field cannot be null.")
     @Min(value = 1, message = "The priority must be at least 1.")
     @Max(value = 10, message = "The priority must be at most 10.")
     private Integer priority;
 
-    @NotNull(message = "The 'complexity' field cannot be null.")
+    @NotNull(message = "The complexity field cannot be null.")
     @Min(value = 1, message = "The complexity must be at least 1.")
     @Max(value = 10, message = "The complexity must be at most 10.")
     private Integer complexity;
 
-    public int getComplexity() {
+    public Integer getComplexity() {
         return complexity;
     }
 
-    public void setComplexity(int complexity) {
+    public void setComplexity(Integer complexity) {
         this.complexity = complexity;
     }
 
-    public int getPriority() {
+    public Integer getPriority() {
         return priority;
     }
 
-    public void setPriority(int priority) {
+    public void setPriority(Integer priority) {
         this.priority = priority;
     }
 

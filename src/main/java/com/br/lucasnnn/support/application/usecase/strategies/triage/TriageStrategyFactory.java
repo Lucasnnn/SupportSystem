@@ -62,7 +62,7 @@ public class TriageStrategyFactory {
         return getStrategy(triageMethod);
     }
 
-    private List<String> getValidTriageMethods() {
+    public List<String> getValidTriageMethods() {
         return Arrays.stream(TriageMethod.values())
                 .map(Enum::name)
                 .toList();

@@ -1,0 +1,2 @@
+INSERT INTO level (id, skill, name, email) VALUES (UUID(), 5, 'Estagiario II', 'estagio2teste.dev@example.com');
+INSERT INTO level (id, skill, name, email) VALUES (UUID(), 9, 'Junior', 'juniorteste.dev@example.com');
